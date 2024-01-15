@@ -13,3 +13,14 @@ stages:
     - scripts/data_processing/prepared.py
     outs:
     - data/stage2
+  train:
+    cmd: python3 scripts/model_learning/ml.py data/stage2/train.csv model.pkl
+    deps:
+    - data/stage2/train.csv
+    - scripts/model_learning/ml.py
+    params:
+    - split.split_ratio
+    - train.seed
+    - train.max_iter
+    outs:
+    - models/model.pkl
