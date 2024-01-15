@@ -24,3 +24,12 @@ stages:
     - train.max_iter
     outs:
     - models/model.pkl
+  evaluate:
+    cmd: python3 scripts/model_learning/evaluate.py data/stage2/train.csv models/model.pkl
+    deps:
+    - data/stage2/train.csv
+    - models/model.pkl
+    - scripts/model_learning/evaluate.py
+    metrics:
+    - evaluate/score.json:
+        cache: false

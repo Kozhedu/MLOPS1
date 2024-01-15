@@ -10,22 +10,14 @@ import pickle
 import sys
 import os
 import yaml
+import json
 
 #Загрузка данных
 f_input = sys.argv[1]
-f_output = os.path.join("models", sys.argv[2])
-os.makedirs(os.path.join("models"), exist_ok=True)
-
-params = yaml.safe_load(open("params.yaml"))["split"]
-p_split_ratio = params["split_ratio"]
-params1 = yaml.safe_load(open("params.yaml"))["train"]
-p_seed = params1["seed"]
-p_max_iter = params1["max_iter"]
+f_model = sys.argv[2]
 
 df = pd.read_csv(f_input)
-print(df.shape)
-print(df.head())
-df.Predicted.value_counts()
+
 #Разделение данных на функции и метки
 X = df[['url']].copy()
 y = df.Predicted.copy()
@@ -40,11 +32,15 @@ def prepare_data(X) :
     features = cv.fit_transform(X.text_sent)
     return X, features
 X, features = prepare_data(X)
-#Обучение модели
-logreg = LogisticRegression(max_iter=p_max_iter)
-trainX, testX, trainY, testY = train_test_split(features, y, test_size=p_split_ratio, stratify=y, random_state=p_seed)
-logreg.fit(trainX, trainY)
+trainX, testX, trainY, testY = train_test_split(features, y, test_size=0.3, stratify=y, random_state=42)
 
-#Сохранение обученной модели
-with open(f_output, 'wb') as output:
-    pickle.dump(logreg, output)
+with open(f_model, "rb") as fd:
+    logreg = pickle.load(fd)
+
+score = logreg.score(testX, testY)
+
+prc_file = os.path.join("evaluate", "score.json")
+os.makedirs(os.path.join("evaluate"), exist_ok=True)
+
+with open(prc_file, "w") as fd:
+    json.dump({"score": score}, fd)

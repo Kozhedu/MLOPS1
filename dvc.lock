@@ -43,8 +43,8 @@ stages:
       size: 12145257
     - path: scripts/model_learning/ml.py
       hash: md5
-      md5: 9f5112a176b880139fa268f9cfe296e8
-      size: 2095
+      md5: d796cfac10cdc0c934fd9f4c57d54359
+      size: 2099
     params:
       params.yaml:
         split.split_ratio: 0.3
@@ -53,5 +53,25 @@ stages:
     outs:
     - path: models/model.pkl
       hash: md5
-      md5: d49eac8c367ed9a15bacd4e03446423a
+      md5: 5207413c9ec15ca014b93e8ef9f5dc4c
       size: 1317815
+  evaluate:
+    cmd: python3 scripts/model_learning/evaluate.py data/stage2/train.csv models/model.pkl
+    deps:
+    - path: data/stage2/train.csv
+      hash: md5
+      md5: 6d274cfee2b0b41385c8f1ab5dcc8b97
+      size: 12145257
+    - path: models/model.pkl
+      hash: md5
+      md5: 5207413c9ec15ca014b93e8ef9f5dc4c
+      size: 1317815
+    - path: scripts/model_learning/evaluate.py
+      hash: md5
+      md5: 63502dffde8366892fe880b13c1113fa
+      size: 1795
+    outs:
+    - path: evaluate/score.json
+      hash: md5
+      md5: 8d400e61f2c758fc4d09b1dccb24c92c
+      size: 29
